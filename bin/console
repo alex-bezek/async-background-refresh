@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "async/background/refresh"
+
+# You can add fixtures and/or initialization code here to make experimenting
+# with your gem easier. You can also use a different console, if you like.
+
+# (If you use this, don't forget to add pry to your Gemfile!)
+# require "pry"
+# Pry.start
+
+def time_block
+  start = Time.now
+  yield
+  time = Time.now - start
+  puts "Block took basically 0 time" if time < 0.001
+  raise "Block took #{time} to execute" if time > 0.001
+end
+
+agent = Async::Background::Refresh::TokenAgent.new
+loop do
+  time_block do
+    puts agent.token.value
+  end
+  sleep 1
+end
